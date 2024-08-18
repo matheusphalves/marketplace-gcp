@@ -1,4 +1,4 @@
-package com.marketplace.controllers;
+package com.marketplace.controllers.rest;
 
 import com.marketplace.domain.product.ProductDTO;
 import com.marketplace.domain.product.ProductResponseDTO;

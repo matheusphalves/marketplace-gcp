@@ -42,7 +42,9 @@ public class CategoryService {
     public Category findById(UUID id) {
         return this.repository
                 .findById(id)
-                .orElseThrow(CategoryNotFoundException::new);
+                .orElseThrow(() -> new CategoryNotFoundException(
+                        String.format("Category not found for id=%s", id))
+                );
     }
 
     public Optional<Category> getById(String id) {

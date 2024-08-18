@@ -7,6 +7,7 @@ import com.marketplace.domain.product.ProductResponseDTO;
 import com.marketplace.domain.product.ProductUpdateDTO;
 import com.marketplace.domain.product.exceptions.ProductNotFoundException;
 import com.marketplace.domain.user.User;
+import com.marketplace.domain.user.exceptions.UserNotFoundException;
 import com.marketplace.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +77,9 @@ public class ProductService {
     public Product findById(UUID id) {
         return this.repository
                 .findById(id)
-                .orElseThrow(ProductNotFoundException::new);
+                .orElseThrow(() ->
+                        new ProductNotFoundException(String.format("Product not found for id=%s", id))
+                );
     }
 
     public ProductResponseDTO update(UUID id, ProductUpdateDTO productDTO) {
@@ -92,10 +95,17 @@ public class ProductService {
         if(productDTO.price() != null)
             product.setPrice(productDTO.price());
 
-        if(productDTO.categoryId() != null)
-            this.categoryService
-                    .getById(String.valueOf(productDTO.categoryId()))
-                    .ifPresent(product::setCategory);
+        if(productDTO.userId() != null) {
+            product.setUser(
+                    this.userService.findById(productDTO.userId())
+            );
+        }
+
+        if(productDTO.categoryId() != null) {
+            product.setCategory(
+                    this.categoryService.findById(productDTO.categoryId())
+            );
+        }
 
         product = this.repository.save(product);
 

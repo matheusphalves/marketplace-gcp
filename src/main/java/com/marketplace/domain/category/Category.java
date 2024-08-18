@@ -25,7 +25,6 @@ public class Category {
     private UUID id;
     private String title;
     private String description;
-    private String ownerId;
 
     @OneToMany(mappedBy = "category")
     private Set<Product> products;

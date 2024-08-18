@@ -1,4 +1,4 @@
-package com.marketplace.controllers;
+package com.marketplace.controllers.rest;
 
 import com.marketplace.domain.category.CategoryDTO;
 import com.marketplace.domain.category.CategoryResponseDTO;
@@ -91,7 +91,7 @@ public class CategoryController {
     @Operation(
             summary = "Returns all registered categories.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Category.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CategoryResponseDTO.class), mediaType = "application/json") }),
     })
     public ResponseEntity<List<CategoryResponseDTO>> getAll() {
 

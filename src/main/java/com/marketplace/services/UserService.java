@@ -1,6 +1,7 @@
 package com.marketplace.services;
 
 import com.marketplace.domain.user.UserResponseDTO;
+import com.marketplace.domain.user.UserUpdateResponseDTO;
 import com.marketplace.domain.user.exceptions.DuplicatedUserException;
 import com.marketplace.domain.user.User;
 import com.marketplace.domain.user.UserDTO;
@@ -40,16 +41,15 @@ public class UserService {
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmailAddress());
     }
 
-    public UserResponseDTO update(UUID id, UserDTO userDTO) {
+    public UserUpdateResponseDTO update(UUID id, UserDTO userDTO) {
 
         User user = findById(id);
 
         user.setName(userDTO.name());
-        user.setEmailAddress(userDTO.emailAddress());
 
         user = repository.save(user);
 
-        return new UserResponseDTO(user.getId(), user.getName(), user.getEmailAddress());
+        return new UserUpdateResponseDTO(user.getId(), user.getName());
 
     }
 
