@@ -3,21 +3,13 @@
 # Stops the script execution if at least one command fails
 set -e
 
-# Variables
-# BUCKET_NAME="app_demo_bucket"
-# JAR_NAME="app_demo.jar"
-# APP_NAME="app_demo"
-# APP_DIR="/opt/$APP_NAME"
-# NGINX_CONF="/etc/nginx/sites-available/default"
-# APP_PORT="8089"
-
-
 BUCKET_NAME="${1:-app_demo_bucket}"
 JAR_NAME="${2:-app_demo.jar}"
 APP_NAME="${3:-app_demo}"
 APP_DIR="/opt/$APP_NAME"
 APP_PORT="${4:-8089}"
 NGINX_CONF="${5:-/etc/nginx/sites-available/default}"
+SPRING_PROFILE="${6:-gcp-dev}"
 
 
 check_args() {
@@ -59,11 +51,12 @@ function download_file_from_bucket {
 # Install the jar and setup their service on systemd
 function install_jar_and_setup_service {
 
-    check_args 3 "$@"
+    check_args 4 "$@"
 
     local APP_NAME="$1"
     local JAR_NAME="$2"
     local APP_DIR="$3"
+    local SPRING_PROFILE="$4"
 
     echo "[$0] Installing $JAR_NAME at $APP_DIR"
     sudo mkdir -p $APP_DIR
@@ -76,7 +69,7 @@ function install_jar_and_setup_service {
     After=network.target
 
     [Service]
-    ExecStart=/usr/bin/java -jar $APP_DIR/$JAR_NAME
+    ExecStart=/usr/bin/java -jar $APP_DIR/$JAR_NAME --spring.profiles.active=$SPRING_PROFILE
     User=www-data
     Restart=always
 
@@ -130,7 +123,7 @@ EOF
 function execute {
     install_required_dependencies
     download_file_from_bucket "$JAR_NAME" "$BUCKET_NAME"
-    install_jar_and_setup_service "$APP_NAME" "$JAR_NAME" "$APP_DIR"
+    install_jar_and_setup_service "$APP_NAME" "$JAR_NAME" "$APP_DIR" "$SPRING_PROFILE"
     update_nginx_configuration "$NGINX_CONF" "$APP_PORT"
     echo "[$0] The instalation script has been completed."
 }
